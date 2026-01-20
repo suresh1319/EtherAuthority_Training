@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staking Dapp - Earn 10% APY</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">
+                <div class="logo-icon">⚡</div>
+                <span class="logo-text">Staking Dapp</span>
+            </div>
+            <button id="connectWallet" class="btn btn-primary">
+                <span class="wallet-icon">🔒</span>
+                <span class="wallet-text">Connect Wallet</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero">
+                <h1 class="hero-title">Stake & Earn <span class="gradient-text">10% APY</span></h1>
+                <p class="hero-subtitle">Stake your tokens and watch your rewards grow automatically</p>
+            </section>
+
+            <!-- Not Connected State -->
+            <div id="notConnectedState" class="not-connected">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🔐</div>
+                    <h3>Connect Your Wallet</h3>
+                    <p>Connect your MetaMask wallet to start staking and earning rewards</p>
+                    <button class="btn btn-primary btn-lg" onclick="connectWallet()">
+                        Connect MetaMask
+                    </button>
+                </div>
+            </div>
+
+            <!-- Connected State -->
+            <div id="connectedState" class="connected-state" style="display: none;">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Total Value Locked</div>
+                            <div class="stat-value" id="totalStaked">0.00 STK</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Your Staked Amount</div>
+                            <div class="stat-value" id="userStaked">0.00 STK</div>
+                        </div>
+                    </div>
+                    <div class="stat-card gradient-card">
+                        <div class="stat-icon">✨</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Pending Rewards</div>
+                            <div class="stat-value" id="pendingRewards">0.00 STK</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Current APY</div>
+                            <div class="stat-value">10.00%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Section -->
+                <div class="action-section">
+                    <!-- Staking Panel -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Stake Tokens</h3>
+                            <div class="balance">
+                                Balance: <span id="tokenBalance">0.00</span> STK
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="input-group">
+                                <input type="number" id="stakeAmount" class="input" placeholder="0.00" step="0.01"
+                                    min="0">
+                                <button class="input-addon-btn" onclick="setMaxStake()">MAX</button>
+                            </div>
+                            <button id="approveBtn" class="btn btn-secondary btn-block" onclick="approveTokens()">
+                                1. Approve Tokens
+                            </button>
+                            <button id="stakeBtn" class="btn btn-primary btn-block" onclick="stake()" disabled>
+                                2. Stake Tokens
+                            </button>
+                            <div class="info-text">
+                                ℹ️ You need to approve the contract before staking for the first time
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Unstaking/Rewards Panel -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Manage Stake</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="rewards-display">
+                                <div class="rewards-label">Available Rewards</div>
+                                <div class="rewards-value" id="rewardsValue">0.00 STK</div>
+                            </div>
+                            <button class="btn btn-gradient btn-block" onclick="claimRewards()">
+                                💎 Claim Rewards
+                            </button>
+
+                            <div class="divider"></div>
+
+                            <div class="input-group">
+                                <input type="number" id="unstakeAmount" class="input" placeholder="0.00" step="0.01"
+                                    min="0">
+                                <button class="input-addon-btn" onclick="setMaxUnstake()">MAX</button>
+                            </div>
+                            <button class="btn btn-secondary btn-block" onclick="unstake()">
+                                Unstake Tokens
+                            </button>
+                            <div class="info-text success">
+                                ✓ No lock period - unstake anytime
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transaction History -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Transaction History</h3>
+                        <button class="btn btn-sm" onclick="loadTransactionHistory()">
+                            🔄 Refresh
+                        </button>
+                    </div>
+                    <div class="panel-body">
+                        <div id="transactionHistory" class="transaction-list">
+                            <div class="empty-state-small">
+                                <div class="empty-state-icon-small">📝</div>
+                                <p>No transactions yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Processing transaction...</div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
